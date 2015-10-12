@@ -18,15 +18,12 @@ GROUP BY Promo, StateHoliday, SchoolHoliday
 
 ALTER TABLE "main"."TrainData" ADD COLUMN "Promo2" int
 
-UPDATE TrainDate
+UPDATE TrainData
 SET Promo2 = 1
-FROM TrainData INNER JOIN Stores
+WHERE EXISTS (SELECT TrainData.Store FROM TrainData INNER JOIN Stores
 ON TrainData.Store = Stores.Store
 INNER JOIN StoresPromo
 ON Stores.Store = StoresPromo.Store
 WHERE Stores.Promo2 = 1
-AND YEAR(TrainData.Date) >= Stores.Promo2Year
-AND MONTH(TrainData.Date) = StoresPromo.Month
-
-
---Promo2WEEK !!!!!!!!!!!!!!!
+AND  strftime('%Y', DayRef) >= Stores.Promo2Year
+AND  strftime('%m', DayRef) = StoresPromo.Month)
